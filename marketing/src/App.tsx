@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useState } from 'react';
 
 const appUrl = () =>
-  (import.meta.env.VITE_APP_URL || 'https://app.teamflow.cyou').replace(/\/$/, '');
+  (import.meta.env.VITE_APP_URL || 'https://app.cashmereet.com').replace(/\/$/, '');
 
 const apiBase = () =>
   (import.meta.env.VITE_API_BASE || import.meta.env.VITE_APP_URL || '').replace(/\/$/, '');
