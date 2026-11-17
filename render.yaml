@@ -10,7 +10,7 @@ services:
   - type: web
     name: teamflow-app
     runtime: node
-    plan: starter
+    plan: free
     rootDir: .
     buildCommand: npm install --include=dev; npm run build
     startCommand: npm start
