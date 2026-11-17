@@ -1,0 +1,82 @@
+# Render Blueprint — TeamFlow (app + platform admin)
+# https://render.com/docs/blueprint-spec
+#
+# After creating from Blueprint, set secret env vars in the dashboard:
+# DATABASE_URL, DIRECT_URL, JWT_SECRET, PLATFORM_JWT_SECRET, SMTP_*, etc.
+# Then attach custom domains app.* / admin.* and update FRONTEND_URL,
+# PLATFORM_ADMIN_URL, and VITE_PLATFORM_API_BASE to those HTTPS URLs.
+
+services:
+  - type: web
+    name: teamflow-app
+    runtime: node
+    plan: starter
+    rootDir: .
+    buildCommand: npm install --include=dev; npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: FRONTEND_URL
+        sync: false
+      - key: PLATFORM_ADMIN_URL
+        sync: false
+      - key: MARKETING_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: PLATFORM_JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_SECURE
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+
+  - type: web
+    name: teamflow-platform-admin
+    runtime: static
+    rootDir: .
+    buildCommand: npm install --include=dev; npm run build:platform-admin
+    staticPublishPath: platform-admin/dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      # Must be the public Web Service URL (custom domain or *.onrender.com).
+      # Redeploy this static site after changing it.
+      - key: VITE_PLATFORM_API_BASE
+        sync: false
+
+  - type: web
+    name: teamflow-marketing
+    runtime: static
+    rootDir: .
+    buildCommand: npm install --include=dev; npm run build:marketing
+    staticPublishPath: marketing/dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_APP_URL
+        value: https://app.teamflow.cyou
+      - key: VITE_API_BASE
+        value: https://app.teamflow.cyou
